@@ -1,0 +1,1 @@
+cmd_Release/turboquant.node := ln -f "Release/obj.target/turboquant.node" "Release/turboquant.node" 2>/dev/null || (rm -rf "Release/turboquant.node" && cp -af "Release/obj.target/turboquant.node" "Release/turboquant.node")

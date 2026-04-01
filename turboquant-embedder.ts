@@ -11,25 +11,26 @@ export const TurboQuantConfigSchema = z.object({
 
 export type TurboQuantOptions = z.infer<typeof TurboQuantConfigSchema>;
 
+import { createRequire } from 'module';
+import path from 'path';
+
+const isNextJsDemo = process.cwd().endsWith('demo');
+const addonPath = isNextJsDemo 
+    ? path.join(process.cwd(), '../build/Release/turboquant.node')
+    : path.join(process.cwd(), './build/Release/turboquant.node');
+
+// Next.js Turbopack strictly analyzes all `require()` calls and crashes on variables.
+// We use a dynamic Function constructor to completely hide the Native File require 
+// from the bundler's static analysis, forcing Node.js to evaluate it directly at runtime.
+const loadBinary = new Function('requireFn', 'binaryPath', 'return requireFn(binaryPath)');
+const turboquantAddon = loadBinary(createRequire(import.meta.url), addonPath);
+
 /**
- * Mock implementation of TurboQuant compression algorithm.
- * Applies PolarQuant and QJL 1-bit residual correction.
- * 
- * @param vector Original high-dimensional floating point vector
- * @returns Compressed floating point vector representation
+ * Executes the real compiled C++ low-level implementation.
+ * Performs absolute 1-bit binary mapping natively against floating point vectors.
  */
 export function compressToPolarQuant(vector: number[]): number[] {
-  // In a real-world scenario, this function would apply quantization mathematics
-  // that converts float32 matrices into highly compressed integer/bit vectors
-  // and map them back to standard array structures if required by Vector DBs.
-  
-  // Here we mock compression by drastically reducing precision
-  // and simulating the bit-wise conversion step conceptually
-  return vector.map((v) => {
-    // Simulated quantization and residual correction transformation
-    const quantized = Math.round(v * 100) / 100;
-    return Number(quantized.toFixed(2));
-  });
+  return turboquantAddon.compressToPolarQuant(vector);
 }
 
 /**
