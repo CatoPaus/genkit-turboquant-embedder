@@ -1,0 +1,110 @@
+# Genkit TurboQuant Embedder Plugin
+
+The TurboQuant Embedder is a plugin for Firebase Genkit designed to act as middleware between your Vector DB and a base high-dimensional embedder (such as Google Vertex AI). By utilizing the PolarQuant and QJL 1-bit residual correction algorithms, this embedder compresses generated vector models down to a fraction of their original size, saving substantial Vector DB memory usage for your RAG workflows without significant accuracy deterioration.
+
+## Installation
+
+Assuming you have already initialized Genkit inside your TypeScript project, seamlessly include `turboquant-embedder.ts` in your source tree.
+
+You must be using Genkit `>=1.0.0` or `@genkit-ai/ai`.
+
+## Usage
+
+You can define the custom embedder middleware within your existing Genkit instance. It requires a `baseEmbedder` which acts as the source of truth for the initial embeddings before the compressor modifies it.
+
+```typescript
+import { genkit } from 'genkit';
+import { googleAI } from '@genkit-ai/google-genai';
+import { defineTurboQuantEmbedder } from './turboquant-embedder';
+
+// 1. Initialize Genkit
+const ai = genkit({
+  plugins: [googleAI()],
+});
+
+// 2. Register the TurboQuant Embedder middleware
+// It registers a new Embedder called 'turboquant/compressor'
+const turboQuantEmbedder = defineTurboQuantEmbedder(ai);
+
+// 3. Utilize in Indexers, Retrievers, or standalone embedding calls
+async function runCompression() {
+  const result = await ai.embedMany({
+    embedder: turboQuantEmbedder,
+    options: {
+      // Pass the underlying embedder model you wish to be compressed. 
+      baseEmbedder: googleAI.embedder('text-embedding-004')
+    },
+    content: [
+      "Hello world, I need to be inserted in a database.",
+      "Vector embeddings are expensive, compress them."
+    ]
+  });
+
+  console.log(result); // Outputs highly compressed vectors via PolarQuant
+}
+```
+
+### RAG Integration (Retrievers and Indexers)
+
+The most prominent usecase is utilizing TurboQuant automatically within `Vector Stores` seamlessly. As it outputs standard Genkit `EmbedResponse` shapes, it hooks precisely into Indexers identically to any standard model.
+
+```typescript
+import { devLocalVectorstore } from '@genkit-ai/dev-local-vectorstore';
+
+// Register dev indexer that uses our middleware automatically
+const ai = genkit({
+  plugins: [
+    googleAI(),
+    devLocalVectorstore([
+      {
+        indexName: 'turboMenu',
+        embedder: turboQuantEmbedder,
+        embedderOptions: {
+          baseEmbedder: googleAI.embedder('text-embedding-004')
+        }
+      },
+    ]),
+  ],
+});
+```
+
+## How It Works
+
+This middleware intercepts the normal operation flow. When input documents or chunks are passed into `embedMany()`, the TurboQuant Embedder:
+1. Skips standard LLM request interception and instead natively delegates the full payload to `baseEmbedder`.
+2. Iterates over the float arrays mathematically crunching them via `compressToPolarQuant()`.
+3. Assures structural typing (`EmbedResponse`) and routes identically backward without mutating normal Genkit mechanics. 
+
+Enjoy robust cost-savings globally on your Genkit instances.
+
+## Cost & Memory Savings Overview
+
+By intercepting and converting raw Float32 embedding vectors down using 1-bit or int8 TurboQuant precision mapping, the plugin achieves striking efficiency across all cloud Vector Database providers:
+
+| Data Type | Dimension Constraint | Bytes Per Vector | Monthly RAM Estimate (1M Vecs) |
+|---|---|---|---|
+| Float32 (Standard) | 768 dims | ~3,072 Bytes | ~3,072 MB ($$$) |
+| TurboQuant (1-bit) | 768 dims | ~96 Bytes | ~96 MB ($) |
+| **Savings** | **-** | **~96.8% Less Space**| **~96.8% Node Cost Reduction** |
+
+By running this plug-in:
+- **Index Sizes** remain lightweight keeping latency ultra-low.
+- **Serverless Operations** are significantly cheaper as retrieval payload sizes shrink by nearly 32x.
+- **Client Bandwidth** required to transfer indices over REST fetches is negligible.
+
+## Try The Interactive Demo
+
+A Next.js full-stack demonstration is included in this repository to showcase "Compressed Chat Memory" perfectly. 
+
+You can run the full chat interface and watch underlying vector hits via the **Genkit Developer UI** locally!
+
+1. Move into the `demo` directory: `cd demo`
+2. Install dependencies: `npm install`
+3. Add a `.env.local` containing your LLM credentials (e.g. `GEMINI_API_KEY=your_key`)
+4. Spin up the Genkit Developer UI linked directly to the running Next.js application:
+
+```bash
+npx genkit start -- npm run dev
+```
+
+Visit `http://localhost:3000` to interact with the Next.js Chatbot, and visit `http://localhost:4000` to inspect the live backend Vector DB compression and Genkit execution traces bridging seamlessly between the two processes!
