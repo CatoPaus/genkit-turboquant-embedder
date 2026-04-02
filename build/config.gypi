@@ -506,7 +506,7 @@
     "cache": "/home/cato/.npm",
     "npm_version": "11.11.0",
     "prefix": "/usr",
-    "local_prefix": "/home/cato/lab/genkit-turboquant-embedder",
+    "local_prefix": "/home/cato/lab/genkit-turboquant-embedder/demo",
     "userconfig": "/home/cato/.npmrc",
     "user_agent": "npm/11.11.0 node/v24.14.1 linux x64 workspaces/false"
   },
