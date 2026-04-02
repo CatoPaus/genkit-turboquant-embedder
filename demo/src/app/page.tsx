@@ -80,7 +80,7 @@ export default function Home() {
             TurboQuant Chat
           </h1>
           <p className="text-gray-300 text-center max-w-lg">
-            Every chat is natively compressed utilizing Genkit + TurboQuant 1-bit residual mapping and inserted seamlessly into a local Vector Store.
+            Every chat is natively quantized utilizing Genkit + TurboQuant 1-bit Polar extraction and streamed seamlessly into Google Cloud Vertex AI.
           </p>
         </div>
 
