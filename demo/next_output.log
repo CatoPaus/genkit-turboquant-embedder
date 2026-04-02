@@ -1,0 +1,169 @@
+
+> demo@0.1.0 dev
+> next dev
+
+▲ Next.js 16.2.2 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.23:3000
+- Environments: .env.local
+✓ Ready in 307ms
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /home/cato/lab/genkit-turboquant-embedder/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /home/cato/lab/genkit-turboquant-embedder/demo/package-lock.json
+
+
+Error calling action: Error: Unable to resolve the retriever
+    at async (src/genkit/chatFlow.ts:70:26)
+  68 |
+  69 |     // 1. Retrieve the historical chat messages via RAG using TurboQuant Embeddings
+> 70 |     const relevantDocs = await ai.retrieve({
+     |                          ^
+  71 |       retriever: chatHistoryRetriever,
+  72 |       query: { content: [{ text: userMessage }] },
+  73 |       options: { {
+  traceId: '92491d1413448439a4fddc4bf55e1a85',
+  ignoreFailedSpan: true
+}
+ POST /api/chat 500 in 5.1s (next.js: 3.3s, application-code: 1747ms)
+ERROR: /embedder/turboquant/compressor already has an entry in the registry. Overwriting.
+Error calling action: Error: TurboQuantEmbedder: 'baseEmbedder' option is required to generate the initial vectors.
+    at <unknown> (../turboquant-embedder.ts:56:15)
+    at async eval (src/genkit/chatFlow.ts:76:26)
+  54 |     async (inputDocuments, options) => {
+  55 |       if (!options?.baseEmbedder) {
+> 56 |         throw new Error(
+     |               ^
+  57 |           "TurboQuantEmbedder: 'baseEmbedder' option is required to generate the initial v...
+  58 |         );
+  59 |       } {
+  traceId: 'ff050e39f37334aed4d967b165919c84',
+  ignoreFailedSpan: true
+}
+ POST /api/chat 500 in 981ms (next.js: 38ms, application-code: 942ms)
+ERROR: /embedder/turboquant/compressor already has an entry in the registry. Overwriting.
+Error calling action: TypeError: embedder2 is not a function
+    at <unknown> (../turboquant-embedder.ts:63:37)
+    at async eval (src/genkit/chatFlow.ts:77:26)
+  61 |       // Request the original high-dimensional embeddings from the wrapped base embedder
+  62 |       // We process the batch array of Document input using the base embedder.
+> 63 |       const baseResponse = await ai.embedMany({
+     |                                     ^
+  64 |         embedder: options.baseEmbedder,
+  65 |         content: inputDocuments.map(doc => doc.text),
+  66 |       }); {
+  traceId: 'b239ac616a29fdbdaf4a1eee7c4f1d72',
+  ignoreFailedSpan: true
+}
+ POST /api/chat 500 in 841ms (next.js: 34ms, application-code: 807ms)
+ERROR: /embedder/turboquant/compressor already has an entry in the registry. Overwriting.
+Error [GenkitError]: UNKNOWN: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent: [404 Not Found] models/text-embedding-004 is not found for API version v1beta, or is not supported for embedContent. Call ListModels to see the list of available models and their supported methods.
+    at async eval (../turboquant-embedder.ts:63:28)
+    at async eval (src/genkit/chatFlow.ts:77:26)
+  61 |       // Request the original high-dimensional embeddings from the wrapped base embedder
+  62 |       // We process the batch array of Document input using the base embedder.
+> 63 |       const baseResponse = await ai.embedMany({
+     |                            ^
+  64 |         embedder: options.baseEmbedder,
+  65 |         content: inputDocuments.map(doc => doc.text),
+  66 |       }); {
+  source: undefined,
+  status: 'UNKNOWN',
+  detail: {
+    error: {
+      code: 404,
+      message: 'models/text-embedding-004 is not found for API version v1beta, or is not supported for embedContent. Call ListModels to see the list of available models and their supported methods.',
+      status: 'NOT_FOUND'
+    }
+  },
+  code: 500,
+  originalMessage: 'Error fetching from https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent: [404 Not Found] models/text-embedding-004 is not found for API version v1beta, or is not supported for embedContent. Call ListModels to see the list of available models and their supported methods.'
+}
+Error calling action: Error [GenkitError]: UNKNOWN: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent: [404 Not Found] models/text-embedding-004 is not found for API version v1beta, or is not supported for embedContent. Call ListModels to see the list of available models and their supported methods.
+    at async eval (../turboquant-embedder.ts:63:28)
+    at async eval (src/genkit/chatFlow.ts:77:26)
+  61 |       // Request the original high-dimensional embeddings from the wrapped base embedder
+  62 |       // We process the batch array of Document input using the base embedder.
+> 63 |       const baseResponse = await ai.embedMany({
+     |                            ^
+  64 |         embedder: options.baseEmbedder,
+  65 |         content: inputDocuments.map(doc => doc.text),
+  66 |       }); {
+  source: undefined,
+  status: 'UNKNOWN',
+  detail: {
+    error: {
+      code: 404,
+      message: 'models/text-embedding-004 is not found for API version v1beta, or is not supported for embedContent. Call ListModels to see the list of available models and their supported methods.',
+      status: 'NOT_FOUND'
+    }
+  },
+  code: 500,
+  originalMessage: 'Error fetching from https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent: [404 Not Found] models/text-embedding-004 is not found for API version v1beta, or is not supported for embedContent. Call ListModels to see the list of available models and their supported methods.',
+  traceId: '753fb5f6b6d342e9f01374676f59ce53',
+  ignoreFailedSpan: true
+}
+ POST /api/chat 500 in 1178ms (next.js: 17ms, application-code: 1161ms)
+ERROR: /embedder/turboquant/compressor already has an entry in the registry. Overwriting.
+(node:53121) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Error calling action: TypeError: embedder2 is not a function
+    at async eval (src/genkit/chatFlow.ts:132:5)
+  130 |     // 3. Persist the conversation snippet into Vectors via standard Genkit Indexer
+  131 |     // We rely on the local vectorstore's defined embedder configuration to handle this n...
+> 132 |     await ai.index({
+      |     ^
+  133 |       indexer: chatHistoryIndexer,
+  134 |       documents: docsToIndex
+  135 |     }); {
+  traceId: '151b16c3048359fb596298912bfbc6ec',
+  ignoreFailedSpan: true
+}
+ POST /api/chat 500 in 7.7s (next.js: 10ms, application-code: 7.7s)
+ERROR: /embedder/turboquant/compressor already has an entry in the registry. Overwriting.
+Error calling action: Error: Error upserting datapoints into index 6479230707460734976: Bad Request. StreamUpdate is not enabled on this index Optional[6479230707460734976].
+    at async eval (src/genkit/chatFlow.ts:135:5)
+  133 |     // 3. Persist the conversation snippet into Vectors via standard Genkit Indexer
+  134 |     // We rely on the local vectorstore's defined embedder configuration to handle this n...
+> 135 |     await ai.index({
+      |     ^
+  136 |       indexer: chatHistoryIndexer,
+  137 |       documents: docsToIndex
+  138 |     }); {
+  traceId: 'c1cd33160a5a4adc30f06bf63940ac07',
+  ignoreFailedSpan: true
+}
+ POST /api/chat 500 in 6.7s (next.js: 24ms, application-code: 6.6s)
+ERROR: /embedder/turboquant/compressor already has an entry in the registry. Overwriting.
+Error calling action: Error: Unable to resolve the retriever
+    at async eval (src/genkit/chatFlow.ts:80:26)
+  78 |
+  79 |     // 1. Retrieve the historical chat messages via RAG using TurboQuant Embeddings
+> 80 |     const relevantDocs = await ai.retrieve({
+     |                          ^
+  81 |       retriever: chatHistoryRetriever,
+  82 |       query: { content: [{ text: userMessage }] },
+  83 |       options: { {
+  traceId: '5b215f4ab7c8cbef57456977f77d082f',
+  ignoreFailedSpan: true
+}
+ POST /api/chat 500 in 1429ms (next.js: 10ms, application-code: 1419ms)
+ERROR: /embedder/turboquant/compressor already has an entry in the registry. Overwriting.
+Error calling action: Error: Unable to resolve the retriever
+    at async eval (src/genkit/chatFlow.ts:77:26)
+  75 |
+  76 |     // 1. Retrieve the historical chat messages via RAG using TurboQuant Embeddings
+> 77 |     const relevantDocs = await ai.retrieve({
+     |                          ^
+  78 |       retriever: chatHistoryRetriever,
+  79 |       query: { content: [{ text: userMessage }] },
+  80 |       options: { {
+  traceId: '1c846c97a3f961b8f69b8293201766ea',
+  ignoreFailedSpan: true
+}
+ POST /api/chat 500 in 1400ms (next.js: 17ms, application-code: 1383ms)
+ERROR: /embedder/turboquant/compressor already has an entry in the registry. Overwriting.
+ POST /api/chat 200 in 7.1s (next.js: 24ms, application-code: 7.0s)
+[?25h
