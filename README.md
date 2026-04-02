@@ -114,6 +114,17 @@ When provisioning your cluster on Google Cloud:
 
 ---
 
+### 🔥 Handling Text Data with Firestore (Document Store)
+Because Vertex AI Vector Search is highly optimized for pure vector calculation, it intentionally does not store the actual human-readable strings associated with your vectors (such as User Chat messages). 
+
+Genkit requires you to seamlessly pair Vertex AI with a dedicated Document Store. In `demo/src/genkit/chatFlow.ts`, this repository bridges the vectors to **Google Cloud Firestore** to handle the actual chat payloads.
+
+To ensure the demo runs natively, you must ensure Firestore is initialized in your GCP Project:
+1. Go to the **Firestore** tab in the GCP Console.
+2. Initialize a Native database.
+3. The demo application will automatically create a `User_Chats` collection, save your chat messages, and securely link the documents to the Vector embeddings under the hood.
+
+---
 ### 🔍 Inspecting Live Vectors & Cleaning Up
 
 Because Vertex AI Vector Search manages mathematical vectors efficiently, they are not typically viewable in the GCP Console UI. If you want to confirm your vectors are saving correctly, you can read datapoints natively via the REST API:
