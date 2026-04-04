@@ -58,12 +58,12 @@ npm run build:cpp
 ### Evading Next.js Turbopack
 Because modern tools (like Next.js's Turbopack) forcefully attempt to statically analyze and bundle backend project files simultaneously, importing `.node` binaries using standard Javascript `require()` statements causes destructive build failures. 
 
-To resolve this, our `turboquant-embedder.ts` uses dynamic module resolution on the fly:
+To gracefully resolve this without resorting to dynamic `eval` or `Function` constructors, we utilize Next.js official magic comments (`/* turbopackIgnore: true */`) to instruct the bundler to ignore the native binary:
 ```typescript
 import { createRequire } from 'module';
-// Obfuscated dynamic load specifically preventing Turbopack from tracing the C++ node runtime
-const bypassRequire = new Function('require', 'return require')(createRequire(import.meta.url));
-const turboquant = bypassRequire('./build/Release/turboquant.node');
+const requireFn = createRequire(import.meta.url);
+// Bypasses static tracing gracefully using official Ignorer comments
+const turboquantAddon = requireFn(/* webpackIgnore: true */ /* turbopackIgnore: true */ addonPath);
 ```
 
 ---

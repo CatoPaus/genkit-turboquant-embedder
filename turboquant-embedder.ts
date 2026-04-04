@@ -19,11 +19,10 @@ const addonPath = isNextJsDemo
     ? path.join(process.cwd(), '../build/Release/turboquant.node')
     : path.join(process.cwd(), './build/Release/turboquant.node');
 
-// Next.js Turbopack strictly analyzes all `require()` calls and crashes on variables.
-// We use a dynamic Function constructor to completely hide the Native File require 
-// from the bundler's static analysis, forcing Node.js to evaluate it directly at runtime.
-const loadBinary = new Function('requireFn', 'binaryPath', 'return requireFn(binaryPath)');
-const turboquantAddon = loadBinary(createRequire(import.meta.url), addonPath);
+// Next.js Turbopack strictly analyzes all `require()` calls and crashes on dynamic external binaries.
+// To resolve this natively without hacky eval/Function constructors, we use Turbopack magic comments.
+const requireFn = createRequire(import.meta.url);
+const turboquantAddon = requireFn(/* webpackIgnore: true */ /* turbopackIgnore: true */ addonPath);
 
 /**
  * Executes the real compiled C++ low-level implementation.
