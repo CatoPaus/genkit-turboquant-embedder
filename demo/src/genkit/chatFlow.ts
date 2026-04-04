@@ -46,7 +46,10 @@ const ai = genkit({
 });
 
 // Register custom TurboQuant embedder natively wrapping Google Gemini
-export const turboQuantEmbedder = defineTurboQuantEmbedder(ai);
+export const turboQuantEmbedder = embedderRef({
+  name: 'turboquant/compressor',
+  info: { dimensions: 768, supports: { input: ['text'] } }
+});
 
 export const chatHistoryIndexer = vertexAiIndexerRef({ indexId: '7258916392949252096' });
 export const chatHistoryRetriever = vertexAiRetrieverRef({ indexId: '7258916392949252096' });
