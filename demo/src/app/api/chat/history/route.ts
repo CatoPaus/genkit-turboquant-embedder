@@ -4,10 +4,10 @@ import { firestore } from '@/genkit/chatFlow';
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    // Hardcoded matching the test scope in page.tsx
     const userId = searchParams.get('userId') || 'my-test-user-123';
 
-    const snapshot = await firestore.collection('User_Chats').get();
+    // Strictly filter Firestore results mapped to the requested user isolated namespace
+    const snapshot = await firestore.collection('User_Chats').where('metadata.userId', '==', userId).get();
     
     // Sort documents chronologically by native Firestore creation time
     // If the creation time is identical (from batch indexing), enforce USER prefix before AI
