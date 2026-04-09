@@ -11,7 +11,7 @@ import { Document } from 'genkit/retriever';
 
 // Initialize Firebase Admin strictly via your local gcloud application-default credentials
 const app = initializeApp();
-const firestore = getFirestore(app);
+export const firestore = getFirestore(app);
 
 // Wraps our C++ Custom Embedder into a Genkit Lifecycle Plugin so it registers early
 const turboQuantPlugin = () => genkitPlugin('turboquant', async (ai) => {

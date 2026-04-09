@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { streamFlow } from '@genkit-ai/next/client';
 import { chatFlow } from '@/genkit/chatFlow';
 
@@ -9,6 +9,18 @@ export default function Home() {
   const [inputVal, setInputVal] = useState('');
   const [isStreaming, setIsStreaming] = useState(false);
   const [costStats, setCostStats] = useState({ original: 0, compressed: 0, saved: 0 });
+
+  useEffect(() => {
+    // Bring back history from Firestore Vector document logs
+    fetch('/api/chat/history')
+      .then(res => res.json())
+      .then(data => {
+        if (data.messages && data.messages.length > 0) {
+          setMessages(data.messages);
+        }
+      })
+      .catch(console.error);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
