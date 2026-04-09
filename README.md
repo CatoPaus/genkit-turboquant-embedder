@@ -17,7 +17,8 @@ The result? Your vectors are compressed laterally by 96.8% before they ever hit 
 * **True Native C++ Hardware Quantization**: Computes 1-bit logic through `node-gyp` compiled hardware extensions via N-API. Totally asynchronous and non-blocking natively on the Node.js event loop.
 * **Next.js Turbopack Optimization**: Features robust `new Function` dynamic obfuscation, meaning the native `turboquant.node` binary behaves flawlessly in modern Next.js Edge/Server endpoints without violently crashing `Turbopack` static analyzers.
 * **Genkit Middleware Interceptor**: Structurally mimics normal `EmbedResponse` types from `@genkit-ai/ai`. Your existing Indexers and Retrievers will never know the data was swapped out from under them.
-* **Real-time Cost Monitoring UI**: The included `demo` showcases a live calculating Data Savings graph connected flawlessly to your `chatFlow` stream.
+* **Hybrid Semantic Grounding**: Dynamically fuses chronological Short-Term conversational memory and mathematical Long-Term Vector Search retrieval in the LLM prompt block to prevent catastrophic RAG semantic-drift.
+* **Multi-Tenant Vector Isolation Sandbox**: Built-in User Switcher directly in the UI routes the Next.js frontend state arrays to explicitly filtered RAG instances on Vertex AI so namespaces are flawlessly separated.
 
 ---
 
@@ -166,7 +167,7 @@ You can run the full chat interface and watch underlying vector hits via the **G
 5. Spin up the Genkit Developer UI linked directly to the running Next.js Application!
 
 ```bash
-npx genkit start -- npm run dev
+npm run genkit
 ```
 
 Visit `http://localhost:3000` to interact with the Next.js Chatbot containing the live saving analytics, and simultaneously visit `http://localhost:4000` to inspect the live backend Vector DB traces mapping out visually!
