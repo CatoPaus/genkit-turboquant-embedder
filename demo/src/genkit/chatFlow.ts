@@ -91,9 +91,7 @@ export const chatFlow = ai.defineFlow(
       prompt: `
         You are a helpful AI assistant. Answer the user properly.
         Here is relevant past context from the user:
-        {{#each docs}}
-          - {{this}}
-        {{/each}}
+        ${relevantDocs.map(d => `- ${d.text}`).join('\n')}
         
         Recent User Message: ${userMessage}
       `,
