@@ -18,6 +18,13 @@ export default function Home() {
         if (data.messages && data.messages.length > 0) {
           setMessages(data.messages);
         }
+        if (data.stats) {
+          setCostStats({
+            original: data.stats.originalBytes,
+            compressed: data.stats.compressedBytes,
+            saved: data.stats.bytesSaved,
+          });
+        }
       })
       .catch(console.error);
   }, []);

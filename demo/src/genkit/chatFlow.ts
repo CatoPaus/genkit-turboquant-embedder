@@ -125,7 +125,7 @@ export const chatFlow = ai.defineFlow(
         originalBytes += stats.originalBytes;
         compressedBytes += stats.compressedBytes;
       }
-      return Document.fromText(texts[idx], { userId });
+      return Document.fromText(texts[idx], { userId, turboQuantStats: stats });
     });
 
     // 3. Persist the conversation snippet into Vectors via standard Genkit Indexer

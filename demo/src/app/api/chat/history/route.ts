@@ -17,9 +17,18 @@ export async function GET(request: Request) {
     });
 
     const messages: { role: string; text: string }[] = [];
+    const statsAccumulator = { originalBytes: 0, compressedBytes: 0, bytesSaved: 0 };
     
     docs.forEach(doc => {
       const data = doc.data();
+      const stats = data.metadata?.turboQuantStats;
+
+      if (stats) {
+         statsAccumulator.originalBytes += stats.originalBytes || 0;
+         statsAccumulator.compressedBytes += stats.compressedBytes || 0;
+         statsAccumulator.bytesSaved += stats.bytesSaved || 0;
+      }
+
       // Genkit Document usually wraps text natively in `content[0].text` or just `content`.
       // We gracefully check multiple typical Genkit properties.
       const rawText = data.content?.[0]?.[0]?.text || data.content?.[0]?.text || data.text || '';
@@ -33,9 +42,9 @@ export async function GET(request: Request) {
       }
     });
 
-    return NextResponse.json({ messages });
+    return NextResponse.json({ messages, stats: statsAccumulator });
   } catch (error) {
     console.error('Error fetching chat history from Firestore:', error);
-    return NextResponse.json({ messages: [] }, { status: 500 });
+    return NextResponse.json({ messages: [], stats: null }, { status: 500 });
   }
 }
