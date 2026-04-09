@@ -10,9 +10,20 @@ export async function GET(request: Request) {
     const snapshot = await firestore.collection('User_Chats').get();
     
     // Sort documents chronologically by native Firestore creation time
+    // If the creation time is identical (from batch indexing), enforce USER prefix before AI
     const docs = snapshot.docs.sort((a, b) => {
        const timeA = a.createTime.toMillis();
        const timeB = b.createTime.toMillis();
+       if (timeA === timeB) {
+         const dataA = a.data();
+         const dataB = b.data();
+         const textA = dataA.content?.[0]?.[0]?.text || dataA.content?.[0]?.text || dataA.text || '';
+         const textB = dataB.content?.[0]?.[0]?.text || dataB.content?.[0]?.text || dataB.text || '';
+         if (typeof textA === 'string' && typeof textB === 'string') {
+            if (textA.startsWith('USER:') && textB.startsWith('AI:')) return -1;
+            if (textA.startsWith('AI:') && textB.startsWith('USER:')) return 1;
+         }
+       }
        return timeA - timeB;
     });
 
