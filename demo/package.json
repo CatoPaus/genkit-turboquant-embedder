@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "genkit": "genkit start -- npx tsx --env-file=.env.local --watch src/genkit/chatFlow.ts"
+    "genkit": "npx genkit start -- npm run dev"
   },
   "dependencies": {
     "@genkit-ai/dev-local-vectorstore": "^1.31.0",
