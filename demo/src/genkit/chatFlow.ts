@@ -60,7 +60,8 @@ export const chatFlow = ai.defineFlow(
     name: 'chatFlow',
     inputSchema: z.object({
       userId: z.string(),
-      userMessage: z.string()
+      userMessage: z.string(),
+      shortTermMemory: z.array(z.string()).optional()
     }),
     outputSchema: z.object({
       answer: z.string(),
@@ -72,7 +73,7 @@ export const chatFlow = ai.defineFlow(
     }),
     streamSchema: z.string(),
   },
-  async ({ userId, userMessage }, { sendChunk }) => {
+  async ({ userId, userMessage, shortTermMemory }, { sendChunk }) => {
 
     await (ai as any).registry.initializeAllPlugins();
 
@@ -85,13 +86,19 @@ export const chatFlow = ai.defineFlow(
       },
     });
 
-    // 2. Generate response using retrieved history
+    // 2. Generate response using retrieved history and short-term array
     const { response, stream } = ai.generateStream({
       model: googleAI.model('gemini-2.5-flash'),
       prompt: `
         You are a helpful AI assistant. Answer the user properly.
-        Here is relevant past context from the user:
+        
+        [LONG-TERM VECTOR RECALLED MEMORY]
+        Here are fragments of highly relevant past context recalled automatically from the database:
         ${relevantDocs.map(d => `- ${d.text}`).join('\n')}
+
+        [SHORT-TERM CONVERSATION HISTORY]
+        Here is the chronological immediate context of the current conversation:
+        ${shortTermMemory?.map(m => `- ${m}`).join('\n') || 'None'}
         
         Recent User Message: ${userMessage}
       `,

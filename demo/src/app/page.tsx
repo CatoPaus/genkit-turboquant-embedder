@@ -43,11 +43,15 @@ export default function Home() {
     setIsStreaming(true);
 
     try {
-      // Connect to our Genkit Route to stream
+      // Connect to our Genkit Route to stream, passing recent messages to keep strict conversational flow
       const result = streamFlow<typeof chatFlow>({
         url: '/api/chat',
         // Hardcoded generic user ID for testing the Vector DB retrieval scope
-        input: { userId: 'my-test-user-123', userMessage }, 
+        input: { 
+          userId: 'my-test-user-123', 
+          userMessage,
+          shortTermMemory: messages.slice(-6).map(m => `${m.role.toUpperCase()}: ${m.text}`)
+        }, 
       });
 
       // Stream the response back dynamically
